@@ -16,6 +16,7 @@ uniform float u_scale;
 uniform vec3 u_emitterPos;
 uniform vec3 u_prevEmitterPos;
 uniform vec2 u_resolution;
+uniform int  u_startShape;
 
 void main(void){
     vec2 st = gl_TexCoord[0].st;  // 0〜テクスチャのピクセル数
@@ -42,19 +43,27 @@ void main(void){
 
         vec3 startPos = vec3(0.0);
 
-
-        // Traiangle Start
-        float xoffset = -(1.0/3.0 * u_resolution.x)/2.0;
-        float yoffset = -(1.0/2.0 * u_resolution.x)/2.0;
-        if(st.x < (u_resolution.x / 3.0)) {
-            //float xoffset = -(1.0/3.0 * u_resolution.x)/2.0;
-            //float yoffset = -(1.0/2.0 * u_resolution.x)/2.0;
-            startPos = vec3(st.x - (u_resolution.x / 2.0) - xoffset, -1.73 * st.x * sin(1.0/3.0 * PI) - yoffset, 0.0);
-        }else if(st.x >= (u_resolution.x / 3.0) && st.x < ((u_resolution.x / 3.0) * 2.0)){
-            startPos = vec3(st.x - (u_resolution.x / 2.0) - xoffset, 1.73 * st.x * sin(1.0/3.0 * PI) -u_resolution.x - yoffset, 0.0);
-        }else{
-            startPos = vec3(2.0 * st.x - u_resolution.x / 2.0 - 2.0/3.0 * u_resolution.x - 2.0/ 3.0 * u_resolution.x - xoffset, -yoffset, 0.0);
+        if(u_startShape == 1){
+            // Sphere Start
+            float sphereR = 200.0;
+            startPos = vec3(sphereR * cos(st.x) * cos(st.y), sphereR * cos(st.x) * sin(st.y), sphereR * sin(st.x));
         }
+
+        if(u_startShape == 2){
+            // Traiangle Start
+            float xoffset = -(1.0/3.0 * u_resolution.x)/2.0;
+            float yoffset = -(1.0/2.0 * u_resolution.x)/2.0;
+            if(st.x < (u_resolution.x / 3.0)) {
+                //float xoffset = -(1.0/3.0 * u_resolution.x)/2.0;
+                //float yoffset = -(1.0/2.0 * u_resolution.x)/2.0;
+                startPos = vec3(st.x - (u_resolution.x / 2.0) - xoffset, -1.73 * st.x * sin(1.0/3.0 * PI) - yoffset, 0.0);
+            }else if(st.x >= (u_resolution.x / 3.0) && st.x < ((u_resolution.x / 3.0) * 2.0)){
+                startPos = vec3(st.x - (u_resolution.x / 2.0) - xoffset, 1.73 * st.x * sin(1.0/3.0 * PI) -u_resolution.x - yoffset, 0.0);
+            }else{
+                startPos = vec3(2.0 * st.x - u_resolution.x / 2.0 - 2.0/3.0 * u_resolution.x - 2.0/ 3.0 * u_resolution.x - xoffset, -yoffset, 0.0);
+            }
+        }
+
 
         pos = startPos + vec3(r * sin(theta) * cos(phi), r * sin(theta) * sin(phi), r * cos(theta));
         

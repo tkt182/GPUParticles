@@ -71,7 +71,7 @@ void ofApp::setup(){
             velAndMaxAge[i*4 + 1] = 0.0;
             velAndMaxAge[i*4 + 2] = 0.0;
             //velAndMaxAge[i*4 + 3] = ofRandom(1,150);
-            velAndMaxAge[i*4 + 3] = 0.1;
+            velAndMaxAge[i*4 + 3] = 0.01;
         }
     }
 
@@ -81,6 +81,9 @@ void ofApp::setup(){
     delete [] velAndMaxAge;
 
 	showTex = false;
+
+    //パーティクルの最初の形
+    startShape = 1;
 }
 
 //--------------------------------------------------------------
@@ -117,6 +120,7 @@ void ofApp::update(){
     updatePos.setUniform3f("u_emitterPos", emitterPos.x, emitterPos.y, emitterPos.z);
     updatePos.setUniform3f("u_prevEmitterPos", prevEmitterPos.x, prevEmitterPos.y, prevEmitterPos.z);
     updatePos.setUniform2f("u_resolution", texRes, texRes);
+    updatePos.setUniform1i("u_startShape", startShape);
     pingPong.src->draw(0, 0);
     updatePos.end();
     pingPong.dst->end();
@@ -165,6 +169,14 @@ void ofApp::keyReleased(int key){
     
     if(key=='f'){
         ofToggleFullscreen();
+    }
+    
+    if(key=='a'){
+        startShape = 1;
+    }
+    
+    if(key=='s'){
+        startShape = 2;
     }
 }
 

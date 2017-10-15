@@ -26,5 +26,8 @@ class ofApp : public ofBaseApp{
     pingPongBuffer pingPong;
     ofVec3f emitterPos, prevEmitterPos;
     int particleNum, texRes;
+    int startShape;
     bool showTex;
+    
+    
 };
