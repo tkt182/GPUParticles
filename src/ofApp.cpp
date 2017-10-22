@@ -10,7 +10,7 @@ void ofApp::setup(){
     
     //パーティクルの数を設定
 
-    particleNum = 500000;
+    particleNum = 400000;
     texRes = ceil(sqrt(particleNum));
     
     // レンダリング用シェーダーの読み込み
@@ -71,7 +71,7 @@ void ofApp::setup(){
             velAndMaxAge[i*4 + 1] = 0.0;
             velAndMaxAge[i*4 + 2] = 0.0;
             //velAndMaxAge[i*4 + 3] = ofRandom(1,150);
-            velAndMaxAge[i*4 + 3] = 0.01;
+            velAndMaxAge[i*4 + 3] = 0.0001;
         }
     }
 
@@ -84,6 +84,8 @@ void ofApp::setup(){
 
     //パーティクルの最初の形
     startShape = 1;
+    rotateAngle = 0.0;
+    rotatePattern = 0;
 }
 
 //--------------------------------------------------------------
@@ -115,12 +117,13 @@ void ofApp::update(){
 
     updatePos.setUniformTexture("u_velAndMaxAgeTex", pingPong.src->getTextureReference(1), 1);
     updatePos.setUniform1f("u_time", time);
-    updatePos.setUniform1f("u_timestep", 0.1);
+    updatePos.setUniform1f("u_timestep", 0.01);
     updatePos.setUniform1f("u_scale", 0.005);
     updatePos.setUniform3f("u_emitterPos", emitterPos.x, emitterPos.y, emitterPos.z);
     updatePos.setUniform3f("u_prevEmitterPos", prevEmitterPos.x, prevEmitterPos.y, prevEmitterPos.z);
     updatePos.setUniform2f("u_resolution", texRes, texRes);
     updatePos.setUniform1i("u_startShape", startShape);
+    updatePos.setUniform1i("u_rotatePattern", rotatePattern);
     pingPong.src->draw(0, 0);
     updatePos.end();
     pingPong.dst->end();
@@ -135,10 +138,15 @@ void ofApp::draw(){
     cam.begin();
     render.begin();
 
+    ofPushMatrix();
+    ofRotateY(rotateAngle);
     // パーティクルの位置と経過時間
 
     render.setUniformTexture("u_posAndAgeTex", pingPong.src->getTextureReference(0), 0);
     particles.draw();
+    
+    ofPopMatrix();
+    
     render.end();
     cam.end();
     ofDisablePointSprites();
@@ -154,6 +162,8 @@ void ofApp::draw(){
         ofPopStyle();
     }
     ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate()), 0,ofGetHeight() - 2);
+    
+    rotateAngle += 0.3;
 }
 
 //--------------------------------------------------------------
@@ -177,6 +187,10 @@ void ofApp::keyReleased(int key){
     
     if(key=='s'){
         startShape = 2;
+    }
+    
+    if(key=='j'){
+        rotatePattern += 1;
     }
 }
 

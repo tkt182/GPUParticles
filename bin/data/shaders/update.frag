@@ -17,6 +17,7 @@ uniform vec3 u_emitterPos;
 uniform vec3 u_prevEmitterPos;
 uniform vec2 u_resolution;
 uniform int  u_startShape;
+uniform int  u_rotatePattern;
 
 void main(void){
     vec2 st = gl_TexCoord[0].st;  // 0〜テクスチャのピクセル数
@@ -54,8 +55,6 @@ void main(void){
             float xoffset = -(1.0/3.0 * u_resolution.x)/2.0;
             float yoffset = -(1.0/2.0 * u_resolution.x)/2.0;
             if(st.x < (u_resolution.x / 3.0)) {
-                //float xoffset = -(1.0/3.0 * u_resolution.x)/2.0;
-                //float yoffset = -(1.0/2.0 * u_resolution.x)/2.0;
                 startPos = vec3(st.x - (u_resolution.x / 2.0) - xoffset, -1.73 * st.x * sin(1.0/3.0 * PI) - yoffset, 0.0);
             }else if(st.x >= (u_resolution.x / 3.0) && st.x < ((u_resolution.x / 3.0) * 2.0)){
                 startPos = vec3(st.x - (u_resolution.x / 2.0) - xoffset, 1.73 * st.x * sin(1.0/3.0 * PI) -u_resolution.x - yoffset, 0.0);
@@ -64,6 +63,12 @@ void main(void){
             }
         }
 
+        float rotateFlg = mod(u_rotatePattern,3);
+        if(rotateFlg == 1){
+            startPos = rotate(startPos, 60., vec3(0., 0., 1.));
+        }else if(rotateFlg == 2){
+            startPos = rotate(startPos, 120., vec3(0., 0., 1.));
+        }
 
         pos = startPos + vec3(r * sin(theta) * cos(phi), r * sin(theta) * sin(phi), r * cos(theta));
         
@@ -74,7 +79,7 @@ void main(void){
     vel.x += snoise(vec4(pos.x * u_scale, pos.y * u_scale, pos.z * u_scale, 0.1352 * u_time * u_timestep));
     vel.y += snoise(vec4(pos.x * u_scale, pos.y * u_scale, pos.z * u_scale, 1.2814 * u_time * u_timestep));
     vel.z += snoise(vec4(pos.x * u_scale, pos.y * u_scale, pos.z * u_scale, 2.5564 * u_time * u_timestep));
-    
+   
     pos += vel;
     
     gl_FragData[0].rgba = vec4(pos, age); // 位置と経過時間を出力
